@@ -1,40 +1,68 @@
 package co.mvpmatch.vendingmachine;
 
+import co.mvpmatch.vendingmachine.cdi.AutoScanFeature;
+import co.mvpmatch.vendingmachine.rest.product.ProductController;
+import co.mvpmatch.vendingmachine.rest.user.UserController;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import java.io.IOException;
 import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main class.
- *
  */
 public class Main {
-    // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:8080/";
 
-    /**
-     * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
-     * @return Grizzly HTTP server.
-     */
-    public static HttpServer startServer() {
-        // create a resource config that scans for JAX-RS resources and providers
-        // in co.mvpmatch.vendingmachine package
-        final ResourceConfig rc = new ResourceConfig().packages("co.mvpmatch.vendingmachine");
+  public static final String API_NAME = "vendingmachine-api/";
+  public static final String API_V1 = "v1/";
 
-        // create and start a new instance of grizzly http server
-        // exposing the Jersey application at BASE_URI
-        return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+  public static final String BASE_URI = "http://localhost:8080/";
+
+  // Starts Grizzly HTTP server
+  public static HttpServer startServer() {
+
+    final ResourceConfig config = new ResourceConfig();
+    config.register(UserController.class);
+    config.register(ProductController.class);
+
+    // enable the auto scanning
+    config.register(AutoScanFeature.class);
+
+    return GrizzlyHttpServerFactory
+        .createHttpServer(URI.create(BASE_URI), config);
+
+  }
+
+  public static void main(String[] args) {
+
+    try {
+
+      final HttpServer httpServer = startServer();
+
+      // add jvm shutdown hook
+      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        try {
+          System.out.println("Shutting down the application...");
+
+          httpServer.shutdownNow();
+
+          System.out.println("Done, exit.");
+        } catch (Exception e) {
+          Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+        }
+      }));
+
+      System.out.printf("Application started.%nStop the application using CTRL+C%n");
+
+      // block and wait shut down signal, like CTRL+C
+      Thread.currentThread().join();
+
+    } catch (InterruptedException ex) {
+      Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
     }
 
-    public static void main(String[] args) throws IOException {
-        final HttpServer server = startServer();
-        System.out.printf("Jersey app started with endpoints available at "
-                + "%s%nHit Ctrl-C to stop it...%n", BASE_URI);
-        System.in.read();
-        server.shutdownNow();
-    }
+  }
 }
-
