@@ -4,7 +4,6 @@ import co.mvpmatch.vendingmachine.cdi.AutoScanFeature;
 import co.mvpmatch.vendingmachine.rest.GenericExceptionMapper;
 import co.mvpmatch.vendingmachine.rest.product.ProductController;
 import co.mvpmatch.vendingmachine.rest.user.UserController;
-import co.mvpmatch.vendingmachine.rest.user.UserExceptionMapper;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -30,7 +29,6 @@ public class Main {
     config.register(UserController.class);
     config.register(ProductController.class);
     config.register(GenericExceptionMapper.class);
-    config.register(UserExceptionMapper.class);
 
     // enable the auto scanning
     config.register(AutoScanFeature.class);

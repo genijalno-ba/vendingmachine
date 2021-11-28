@@ -13,4 +13,9 @@ public class UserServiceClient extends AbstractClient<IUserService.User> impleme
   public User getUserByUsername(String username) {
     return get("/user/" + username, User.class);
   }
+
+  @Override
+  public User deleteUser(String username) {
+    return delete("/user/" + username, User.class);
+  }
 }

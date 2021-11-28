@@ -22,4 +22,11 @@ public class UserRepository implements IUserRepository {
     user.setUsername(username);
     return userDao.read(user);
   }
+
+  @Override
+  public User deleteUser(String username) throws SQLException {
+    User user = new User();
+    user.setUsername(username);
+    return userDao.delete(user);
+  }
 }

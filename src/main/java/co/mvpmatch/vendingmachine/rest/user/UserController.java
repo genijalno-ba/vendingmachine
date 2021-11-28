@@ -3,6 +3,7 @@ package co.mvpmatch.vendingmachine.rest.user;
 import co.mvpmatch.vendingmachine.contracts.IUserService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -23,12 +24,18 @@ public class UserController {
 
   @GET
   @Path("/{username}")
-  public IUserService.User getUserByUsername(@PathParam("username") String username) throws IUserService.VendingMachineUserNotFoundException {
+  public IUserService.User getUserByUsername(@PathParam("username") String username) {
     return userService.getUserByUsername(username);
   }
 
   @POST
-  public IUserService.User createUser(IUserService.UserContext userContext) throws IUserService.VendingMachineCreateUserException {
+  public IUserService.User createUser(IUserService.UserContext userContext) {
     return userService.createUser(userContext);
+  }
+
+  @DELETE
+  @Path("/{username}")
+  public IUserService.User deleteUser(@PathParam("username") String username) {
+    return userService.deleteUser(username);
   }
 }

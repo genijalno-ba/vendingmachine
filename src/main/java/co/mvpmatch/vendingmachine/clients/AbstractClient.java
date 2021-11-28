@@ -32,6 +32,10 @@ public abstract class AbstractClient<T> {
     return target.path(path).request().get(responseClass);
   }
 
+  public T delete(String path, Class<T> responseClass) {
+    return target.path(path).request().delete(responseClass);
+  }
+
   public Collection<T> getCollection(String path) {
     return target.path(path).request().get(collectionType);
   }

@@ -10,11 +10,13 @@ import java.math.BigDecimal;
 @Contract
 public interface IUserService {
 
-  User createUser(UserContext user) throws VendingMachineCreateUserException;
+  User createUser(UserContext user);
 
-  User getUserByUsername(String username) throws VendingMachineUserNotFoundException;
+  User getUserByUsername(String username);
 
-  class VendingMachineCreateUserException extends Exception {
+  User deleteUser(String username);
+
+  class VendingMachineCreateUserException extends RuntimeException {
     public static final long serialVersionUID = 1L;
 
     public VendingMachineCreateUserException(String message, Throwable throwable) {
@@ -22,7 +24,7 @@ public interface IUserService {
     }
   }
 
-  class VendingMachineUserNotFoundException extends Exception {
+  class VendingMachineUserNotFoundException extends RuntimeException {
     public static final long serialVersionUID = 1L;
 
     public VendingMachineUserNotFoundException(String message) {
@@ -30,6 +32,22 @@ public interface IUserService {
     }
 
     public VendingMachineUserNotFoundException(String message, Throwable throwable) {
+      super(message, throwable);
+    }
+  }
+
+  class VendingMachineUserInternalErrorException extends RuntimeException {
+    public static final long serialVersionUID = 1L;
+
+    public VendingMachineUserInternalErrorException(String message, Throwable throwable) {
+      super(message, throwable);
+    }
+  }
+
+  class VendingMachineDeleteUserException extends RuntimeException {
+    public static final long serialVersionUID = 1L;
+
+    public VendingMachineDeleteUserException(String message, Throwable throwable) {
       super(message, throwable);
     }
   }
