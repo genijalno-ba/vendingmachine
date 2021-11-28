@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.MediaType;
 import static co.mvpmatch.vendingmachine.Main.API_NAME;
 import static co.mvpmatch.vendingmachine.Main.API_V1;
 
+@SuppressWarnings("unused")
 @Path(API_NAME + API_V1 + "user")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

@@ -2,9 +2,8 @@ package co.mvpmatch.vendingmachine;
 
 import co.mvpmatch.vendingmachine.clients.ProductServiceClient;
 import co.mvpmatch.vendingmachine.contracts.IProductService;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -12,22 +11,20 @@ import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 
-public class ProductServiceTest {
+public class ProductServiceTest extends AbstractTest {
 
-  private HttpServer server;
-  private IProductService productService;
+  private static IProductService productService;
 
-  @Before
-  public void setUp() {
-    // start the server
-    server = Main.startServer();
+  @BeforeClass
+  public static void setUp() {
+    AbstractTest.startServer();
     // create the client
     productService = new ProductServiceClient();
   }
 
-  @After
-  public void tearDown() {
-    server.shutdownNow();
+  @AfterClass
+  public static void tearDown() {
+    AbstractTest.shutdownServer();
   }
 
   @Test

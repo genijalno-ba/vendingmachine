@@ -11,11 +11,11 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import static co.mvpmatch.vendingmachine.Main.API_NAME;
 import static co.mvpmatch.vendingmachine.Main.API_V1;
 
+@SuppressWarnings("unused")
 @Path(API_NAME + API_V1 + "product")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

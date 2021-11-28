@@ -2,13 +2,15 @@ package co.mvpmatch.vendingmachine.clients;
 
 import co.mvpmatch.vendingmachine.contracts.IProductService;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 public class ProductServiceClient extends AbstractClient<IProductService.Product> implements IProductService {
 
   @Override
   public Collection<Product> getBySellerUsername(String username) {
-    return getCollection("product/" + username);
+    return getCollection("product/" + URLEncoder.encode(username, StandardCharsets.UTF_8));
   }
 
   @Override
