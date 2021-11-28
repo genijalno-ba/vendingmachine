@@ -1,6 +1,7 @@
 package co.mvpmatch.vendingmachine;
 
 import co.mvpmatch.vendingmachine.cdi.AutoScanFeature;
+import co.mvpmatch.vendingmachine.cdi.LiquibaseFeature;
 import co.mvpmatch.vendingmachine.rest.GenericExceptionMapper;
 import co.mvpmatch.vendingmachine.rest.product.ProductController;
 import co.mvpmatch.vendingmachine.rest.user.UserController;
@@ -26,12 +27,13 @@ public class Main {
   public static HttpServer startServer() {
 
     final ResourceConfig config = new ResourceConfig();
+    // enable the auto scanning
+    config.register(AutoScanFeature.class);
+    config.register(LiquibaseFeature.class);
     config.register(UserController.class);
     config.register(ProductController.class);
     config.register(GenericExceptionMapper.class);
 
-    // enable the auto scanning
-    config.register(AutoScanFeature.class);
 
     return GrizzlyHttpServerFactory
         .createHttpServer(URI.create(BASE_URI), config);

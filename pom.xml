@@ -51,6 +51,16 @@
             <artifactId>HikariCP</artifactId>
             <version>5.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-maven-plugin</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
@@ -87,10 +97,19 @@
                     <mainClass>co.mvpmatch.vendingmachine.Main</mainClass>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>${liquibase.version}</version>
+                <configuration>
+                    <propertyFile>src/main/resources/liquibase.properties</propertyFile>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <properties>
+        <liquibase.version>3.10.3</liquibase.version>
         <jersey.version>3.0.2</jersey.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
