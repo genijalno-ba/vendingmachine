@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class ProductServiceTest {
 
   private HttpServer server;
-  private ProductServiceClient productService;
+  private IProductService productService;
 
   @Before
   public void setUp() {

@@ -23,12 +23,12 @@ public class UserController {
 
   @GET
   @Path("/{username}")
-  public IUserService.User getUserByUsername(@PathParam("username") String username) {
+  public IUserService.User getUserByUsername(@PathParam("username") String username) throws IUserService.VendingMachineUserNotFoundException {
     return userService.getUserByUsername(username);
   }
 
   @POST
-  public IUserService.User postIt(IUserService.UserContext userContext) {
+  public IUserService.User createUser(IUserService.UserContext userContext) throws IUserService.VendingMachineCreateUserException {
     return userService.createUser(userContext);
   }
 }

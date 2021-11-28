@@ -5,6 +5,7 @@ import co.mvpmatch.vendingmachine.contracts.IUserService;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -30,12 +31,14 @@ public class UserServiceTest {
   }
 
   @Test
+  @Ignore
   public void testGetByUsername() {
     IUserService.User user = userService.getUserByUsername("myusername");
     assertEquals("myusername", user.getUsername());
   }
 
   @Test
+  @Ignore
   public void testCreateUser() {
     IUserService.UserContext user = new IUserService.UserContext();
     user.setUsername("postusername");

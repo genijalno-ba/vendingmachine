@@ -1,31 +1,46 @@
 package co.mvpmatch.vendingmachine.services;
 
 import co.mvpmatch.vendingmachine.contracts.IUserService;
+import co.mvpmatch.vendingmachine.data.user.IUserRepository;
+import jakarta.inject.Inject;
 import org.jvnet.hk2.annotations.Service;
 
-import java.math.BigDecimal;
+import java.sql.SQLException;
 
 @SuppressWarnings("unused")
 @Service
 public class UserService implements IUserService {
 
+  @Inject
+  private IUserRepository userRepository;
+
+  @Inject
+  private UserAdapter userAdapter;
+
   @Override
-  public User createUser(UserContext userContext) {
-    //TODO: persistence
-    return new User.Builder()
-        .setUsername(userContext.getUsername())
-        .setDeposit(userContext.getDeposit())
-        .setRole(userContext.getRole())
-        .build();
+  public User createUser(UserContext userContext) throws VendingMachineCreateUserException {
+    User user;
+    try {
+      co.mvpmatch.vendingmachine.data.user.User userEntity = userRepository.createUser(userAdapter.fromContext(userContext));
+      user = userAdapter.fromDb(userEntity);
+    } catch (SQLException e) {
+      throw new IUserService.VendingMachineCreateUserException("Could not create User", e);
+    }
+    return user;
   }
 
   @Override
-  public User getUserByUsername(String username) {
-    //TODO: persistence
-    return new User.Builder()
-        .setUsername(username)
-        .setDeposit(BigDecimal.TEN)
-        .setRole(Role.SELLER)
-        .build();
+  public User getUserByUsername(String username) throws VendingMachineUserNotFoundException {
+    User user;
+    try {
+      co.mvpmatch.vendingmachine.data.user.User userEntity = userRepository.getUser(username);
+      if (null == userEntity) {
+        throw new IUserService.VendingMachineUserNotFoundException("Could not find User");
+      }
+      user = userAdapter.fromDb(userEntity);
+    } catch (SQLException e) {
+      throw new IUserService.VendingMachineUserNotFoundException("Could not find User, internal error", e);
+    }
+    return user;
   }
 }

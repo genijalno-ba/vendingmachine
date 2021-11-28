@@ -10,9 +10,29 @@ import java.math.BigDecimal;
 @Contract
 public interface IUserService {
 
-  User createUser(UserContext user);
+  User createUser(UserContext user) throws VendingMachineCreateUserException;
 
-  User getUserByUsername(String username);
+  User getUserByUsername(String username) throws VendingMachineUserNotFoundException;
+
+  class VendingMachineCreateUserException extends Exception {
+    public static final long serialVersionUID = 1L;
+
+    public VendingMachineCreateUserException(String message, Throwable throwable) {
+      super(message, throwable);
+    }
+  }
+
+  class VendingMachineUserNotFoundException extends Exception {
+    public static final long serialVersionUID = 1L;
+
+    public VendingMachineUserNotFoundException(String message) {
+      super(message);
+    }
+
+    public VendingMachineUserNotFoundException(String message, Throwable throwable) {
+      super(message, throwable);
+    }
+  }
 
   class UserContext {
 
