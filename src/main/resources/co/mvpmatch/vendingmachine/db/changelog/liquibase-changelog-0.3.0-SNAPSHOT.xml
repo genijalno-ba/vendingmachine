@@ -1,0 +1,31 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="senchi" id="1639128749335-1">
+        <dropForeignKeyConstraint baseTableName="token_session_table" constraintName="fk_token_session_username_to_user_username"/>
+    </changeSet>
+    <changeSet author="senchi" id="1639128749335-2">
+        <dropTable tableName="token_session_table"/>
+    </changeSet>
+    <changeSet author="senchi (generated)" id="1639128749335-3">
+        <createTable tableName="token_session_table">
+            <column name="username" type="TEXT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="token_session_table_pkey"/>
+            </column>
+            <column name="token" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="valid_until" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="token_session_table"/>
+        </rollback>
+    </changeSet>
+    <changeSet author="senchi (generated)" id="1639128749335-4">
+        <addForeignKeyConstraint baseColumnNames="username" baseTableName="token_session_table" constraintName="fk_token_session_username_to_user_username" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="username" referencedTableName="user_table" validate="true"/>
+        <rollback>
+            <dropForeignKeyConstraint baseTableName="token_session_table" constraintName="fk_token_session_username_to_user_username"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

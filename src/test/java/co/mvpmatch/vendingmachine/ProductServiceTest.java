@@ -11,7 +11,6 @@ import jakarta.ws.rs.NotFoundException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -20,7 +19,6 @@ import java.math.BigDecimal;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
 public class ProductServiceTest extends VendingMachineApiTest {
 
   private static IProductService productService;
@@ -151,8 +149,11 @@ public class ProductServiceTest extends VendingMachineApiTest {
 
   @Test
   public void test06_DeleteUsers() {
+    loginUser(tokenSessionService, "e2e-producttest-buyer-username", "testuser");
     deleteUser(userService, tokenSessionService, "e2e-producttest-buyer-username");
+    loginUser(tokenSessionService, "e2e-producttest-seller-username", "testuser");
     deleteUser(userService, tokenSessionService, "e2e-producttest-seller-username");
+    loginUser(tokenSessionService, "e2e-producttest-wrong-seller-username", "testuser");
     deleteUser(userService, tokenSessionService, "e2e-producttest-wrong-seller-username");
   }
 }

@@ -3,6 +3,8 @@ package co.mvpmatch.vendingmachine.clients;
 import co.mvpmatch.vendingmachine.contracts.IProductService;
 
 import java.math.BigInteger;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 public class ProductServiceClient extends AbstractClient<IProductService.Product> implements IProductService {
@@ -19,7 +21,7 @@ public class ProductServiceClient extends AbstractClient<IProductService.Product
 
   @Override
   public Product getByProductId(BigInteger productId) {
-    return get("product/" + productId, Product.class);
+    return get("product/" + URLEncoder.encode(productId.toString(), StandardCharsets.UTF_8), Product.class);
   }
 
   @Override
@@ -29,6 +31,6 @@ public class ProductServiceClient extends AbstractClient<IProductService.Product
 
   @Override
   public Product deleteProduct(BigInteger productId) {
-    return delete("product/" + productId, Product.class);
+    return delete("product/" + URLEncoder.encode(productId.toString(), StandardCharsets.UTF_8), Product.class);
   }
 }

@@ -37,13 +37,24 @@ public class TokenSessionService extends AbstractService implements ITokenSessio
 
   @Override
   public TokenSession createTokenSession(TokenSessionContext tokenSessionContext) {
-    try {
       String username = tokenSessionContext.getUsername();
       String password = tokenSessionContext.getPassword();
+    try {
       authenticate(username, password);
       return issueToken(username);
     } catch (SQLException e) {
-      throw new VendingMachineCreateTokenSessionException("Could not create token session", e);
+      if (!e.getMessage().contains("violates unique constraint")) {
+        throw new VendingMachineCreateTokenSessionException("Could not create token session", e);
+      }
+    }
+    try {
+      boolean success = 1 == tokenSessionRepository.deleteTokenSessionByUsername(username);
+      if (!success) {
+        throw new ITokenSessionService.VendingMachineCreateTokenSessionException("Could not delete existing token session. Could not recreate token session", null);
+      }
+      return issueToken(username);
+    }catch (SQLException e) {
+      throw new VendingMachineCreateTokenSessionException("Token session already exists. Could not recreate token session", e);
     }
   }
 

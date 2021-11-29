@@ -3,4 +3,5 @@
     <include file="liquibase-changelog-0.1.0-SNAPSHOT.xml" relativeToChangelogFile="true"/>
     <include file="liquibase-changelog-0.2.0-SNAPSHOT.xml" relativeToChangelogFile="true"/>
     <include file="liquibase-changelog-0.2.1-SNAPSHOT.xml" relativeToChangelogFile="true"/>
+    <include file="liquibase-changelog-0.3.0-SNAPSHOT.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
