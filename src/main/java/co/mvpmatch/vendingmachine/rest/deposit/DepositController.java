@@ -23,7 +23,7 @@ public class DepositController {
   private IDepositService depositService;
 
   @POST
-  @Secured({IUserService.Role.SELLER})
+  @Secured({IUserService.Role.BUYER})
   public IUserService.User deposit(IDepositService.DepositContext depositContext) {
     return depositService.deposit(depositContext);
   }
