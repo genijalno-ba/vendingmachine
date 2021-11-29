@@ -50,6 +50,7 @@ public class UserDao extends AbstractDao implements IUserDao {
       User user = new User();
       user.setUsername(resultSet.getString("username"));
       user.setDeposit(resultSet.getBigDecimal("deposit"));
+      user.setPassword(resultSet.getString("password"));
       String role = resultSet.getString("role");
       if (null != role) {
         user.setRole(IUserService.Role.valueOf(role));

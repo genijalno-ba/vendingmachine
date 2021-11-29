@@ -12,8 +12,6 @@ import java.time.temporal.TemporalAmount;
 @Contract
 public interface ITokenSessionService {
 
-  TemporalAmount ONE_DAY = Duration.ofDays(1);
-
   TokenSession createTokenSession(TokenSessionContext tokenSessionContext);
 
   TokenSession readTokenSession(String token);
@@ -22,20 +20,27 @@ public interface ITokenSessionService {
 
   class TokenSessionContext {
     private final String username;
+    private final String password;
 
-    private TokenSessionContext(String username) {
+    private TokenSessionContext(String username, String password) {
       this.username = username;
+      this.password = password;
     }
 
     @JsonbCreator
     public static TokenSessionContext create(
-        @JsonbProperty("username") String username
+        @JsonbProperty("username") String username,
+        @JsonbProperty("password") String password
     ) {
-      return new TokenSessionContext(username);
+      return new TokenSessionContext(username, password);
     }
 
     public String getUsername() {
       return username;
+    }
+
+    public String getPassword() {
+      return password;
     }
   }
 
@@ -114,6 +119,15 @@ public interface ITokenSessionService {
 
     public VendingMachineReadTokenSessionException(String message, Throwable throwable) {
       super(message, throwable);
+    }
+  }
+
+  class VendingMachineAuthenticateException extends RuntimeException {
+
+    public static final long serialVersionUID = 1L;
+
+    public VendingMachineAuthenticateException(String message) {
+      super(message);
     }
   }
 

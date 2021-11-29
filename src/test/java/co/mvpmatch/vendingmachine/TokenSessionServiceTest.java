@@ -4,6 +4,7 @@ import co.mvpmatch.vendingmachine.clients.TokenSessionClient;
 import co.mvpmatch.vendingmachine.clients.UserServiceClient;
 import co.mvpmatch.vendingmachine.contracts.ITokenSessionService;
 import co.mvpmatch.vendingmachine.contracts.IUserService;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -14,7 +15,7 @@ import org.junit.runners.MethodSorters;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-import static co.mvpmatch.vendingmachine.contracts.ITokenSessionService.ONE_DAY;
+import static co.mvpmatch.vendingmachine.accesscontrol.IAuthenticationTokenIssuer.ONE_DAY;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -31,8 +32,6 @@ public class TokenSessionServiceTest extends AbstractTest {
     // create the client
     tokenSessionService = new TokenSessionClient();
     userService = new UserServiceClient();
-    currentUser = createUser();
-    currentTokenSession = createTokenSession();
   }
 
   @AfterClass
@@ -40,26 +39,43 @@ public class TokenSessionServiceTest extends AbstractTest {
     AbstractTest.shutdownServer();
   }
 
-  public static IUserService.User createUser() {
+  @Test
+  public void test01_createUser() {
     IUserService.UserContext user = new IUserService.UserContext();
     user.setUsername("e2e-tokensessiontest-username");
-    user.setPassword("postpassword");
+    user.setPassword("testuser");
     user.setDeposit(BigDecimal.TEN);
     user.setRole(IUserService.Role.BUYER);
-    return userService.createUser(user);
+    currentUser = userService.createUser(user);
   }
 
-  public static ITokenSessionService.TokenSession createTokenSession() {
+  @Test
+  public void test02_createTokenSession() {
     final Instant NOW = Instant.now();
     ITokenSessionService.TokenSessionContext tokenSessionContext = ITokenSessionService.TokenSessionContext
-        .create("e2e-tokensessiontest-username");
+        .create("e2e-tokensessiontest-username", "testuser");
     ITokenSessionService.TokenSession tokenSession = tokenSessionService.createTokenSession(tokenSessionContext);
     assertEquals("e2e-tokensessiontest-username", tokenSession.getUsername());
     assertNotNull(tokenSession.getToken());
     assertTrue(tokenSession.getValidUntil().toInstant()
         .isAfter(NOW.plus(ONE_DAY)));
     assertNotNull(tokenSession);
-    return tokenSession;
+    currentTokenSession = tokenSession;
+  }
+
+  @Test
+  public void test02_createTokenSessionWrongPassword() {
+    ITokenSessionService.TokenSessionContext tokenSessionContext = ITokenSessionService.TokenSessionContext
+        .create("e2e-tokensessiontest-username", "wrongpassword");
+    Throwable t = null;
+    try {
+      tokenSessionService.createTokenSession(tokenSessionContext);
+    } catch (Exception e) {
+      e.printStackTrace();
+      t = e;
+    }
+    assertNotNull(t);
+    assertTrue(t instanceof ForbiddenException);
   }
 
   @Test

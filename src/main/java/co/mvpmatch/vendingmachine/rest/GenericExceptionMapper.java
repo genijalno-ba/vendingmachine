@@ -36,6 +36,9 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
     if (e instanceof ITokenSessionService.VendingMachineReadTokenSessionException) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
     }
+    if (e instanceof ITokenSessionService.VendingMachineAuthenticateException) {
+      return Response.status(Response.Status.FORBIDDEN).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create("Something went wrong")).type(MediaType.APPLICATION_JSON).build();
   }
 }

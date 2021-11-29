@@ -63,6 +63,12 @@
         </dependency>
 
         <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
@@ -109,6 +115,7 @@
     </build>
 
     <properties>
+        <jjwt.version>0.9.1</jjwt.version>
         <liquibase.version>3.10.3</liquibase.version>
         <jersey.version>3.0.2</jersey.version>
         <maven.compiler.source>11</maven.compiler.source>

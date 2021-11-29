@@ -1,5 +1,6 @@
 package co.mvpmatch.vendingmachine.services;
 
+import co.mvpmatch.vendingmachine.accesscontrol.IPasswordService;
 import co.mvpmatch.vendingmachine.contracts.IUserService;
 import co.mvpmatch.vendingmachine.data.user.IUserRepository;
 import jakarta.inject.Inject;
@@ -17,8 +18,12 @@ public class UserService implements IUserService {
   @Inject
   private UserAdapter userAdapter;
 
+  @Inject
+  private IPasswordService passwordService;
+
   @Override
   public User createUser(UserContext userContext) {
+    hashPassword(userContext);
     User user;
     try {
       co.mvpmatch.vendingmachine.data.user.User userEntity = userRepository.createUser(userAdapter.fromContext(userContext));
@@ -27,6 +32,10 @@ public class UserService implements IUserService {
       throw new IUserService.VendingMachineCreateUserException("Could not create User", e);
     }
     return user;
+  }
+
+  private void hashPassword(UserContext userContext) {
+    userContext.setPassword(passwordService.digestPassword(userContext.getPassword()));
   }
 
   @Override
