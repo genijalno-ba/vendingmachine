@@ -1,6 +1,7 @@
 package co.mvpmatch.vendingmachine;
 
 import co.mvpmatch.vendingmachine.accesscontrol.AuthenticationFilter;
+import co.mvpmatch.vendingmachine.accesscontrol.AuthorizationFilter;
 import co.mvpmatch.vendingmachine.cdi.AutoScanFeature;
 import co.mvpmatch.vendingmachine.data.LiquibaseFeature;
 import co.mvpmatch.vendingmachine.rest.GenericExceptionMapper;
@@ -33,6 +34,7 @@ public class Main {
     config.register(AutoScanFeature.class);
     // add others manually
     config.register(AuthenticationFilter.class);
+    config.register(AuthorizationFilter.class);
     config.register(LiquibaseFeature.class);
     config.register(TokenSessionController.class);
     config.register(UserController.class);

@@ -1,5 +1,6 @@
 package co.mvpmatch.vendingmachine.rest;
 
+import co.mvpmatch.vendingmachine.accesscontrol.AuthorizationFilter;
 import co.mvpmatch.vendingmachine.contracts.IProductService;
 import co.mvpmatch.vendingmachine.contracts.ITokenSessionService;
 import co.mvpmatch.vendingmachine.contracts.IUserService;
@@ -16,6 +17,9 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
   @Override
   public Response toResponse(Throwable e) {
     Logger.getLogger(GenericExceptionMapper.class.getName()).log(Level.SEVERE, null, e);
+    if (e instanceof AuthorizationFilter.VendingMachineUserForbiddenException) {
+      return Response.status(Response.Status.FORBIDDEN).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
     if (e instanceof IUserService.VendingMachineUserNotFoundException) {
       return Response.status(Response.Status.NOT_FOUND).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
     }

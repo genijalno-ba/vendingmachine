@@ -1,5 +1,6 @@
 package co.mvpmatch.vendingmachine.accesscontrol;
 
+import co.mvpmatch.vendingmachine.contracts.ITokenSessionService;
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
@@ -8,9 +9,11 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import jakarta.ws.rs.ext.Provider;
 
 import java.security.Key;
+import java.security.Principal;
 
 @SuppressWarnings("unused")
 @Secured
@@ -23,6 +26,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
   @Inject
   private IKeyGenerator keyGenerator;
+
+  @Inject
+  private ITokenSessionService tokenSessionService;
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
@@ -43,6 +49,31 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     } catch (Exception e) {
       abortWithUnauthorized(requestContext);
     }
+    // Identify User
+    ITokenSessionService.TokenSession tokenSession = tokenSessionService.readTokenSession(token);
+    final String username = tokenSession.getUsername();
+    final SecurityContext currentSecurityContext = requestContext.getSecurityContext();
+    requestContext.setSecurityContext(new SecurityContext() {
+      @Override
+      public Principal getUserPrincipal() {
+        return () -> username;
+      }
+
+      @Override
+      public boolean isUserInRole(String s) {
+        return true;
+      }
+
+      @Override
+      public boolean isSecure() {
+        return currentSecurityContext.isSecure();
+      }
+
+      @Override
+      public String getAuthenticationScheme() {
+        return AUTHENTICATION_SCHEME;
+      }
+    });
   }
 
   private boolean isTokenBasedAuthentication(String authorizationHeader) {
