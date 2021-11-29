@@ -11,4 +11,6 @@ public interface ITokenSessionDao extends IDao<TokenSession> {
   TokenSession readByToken(TokenSession entity) throws SQLException;
 
   int deleteByToken(TokenSession entity) throws SQLException;
+
+  int deleteByUsername(TokenSession tokenSession) throws SQLException;
 }

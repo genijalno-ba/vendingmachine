@@ -1,6 +1,5 @@
 package co.mvpmatch.vendingmachine.data;
 
-import co.mvpmatch.vendingmachine.cdi.LiquibaseFeature;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.jvnet.hk2.annotations.Service;

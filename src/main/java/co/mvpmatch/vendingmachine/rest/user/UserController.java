@@ -1,5 +1,6 @@
 package co.mvpmatch.vendingmachine.rest.user;
 
+import co.mvpmatch.vendingmachine.accesscontrol.Secured;
 import co.mvpmatch.vendingmachine.contracts.IUserService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -25,6 +26,7 @@ public class UserController {
 
   @GET
   @Path("/{username}")
+  @Secured
   public IUserService.User getUserByUsername(@PathParam("username") String username) {
     return userService.getUserByUsername(username);
   }
@@ -36,6 +38,7 @@ public class UserController {
 
   @DELETE
   @Path("/{username}")
+  @Secured
   public IUserService.User deleteUser(@PathParam("username") String username) {
     return userService.deleteUser(username);
   }

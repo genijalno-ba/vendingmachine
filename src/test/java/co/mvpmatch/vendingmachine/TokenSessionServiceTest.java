@@ -23,7 +23,6 @@ public class TokenSessionServiceTest extends AbstractTest {
 
   private static ITokenSessionService tokenSessionService;
   private static IUserService userService;
-  private static ITokenSessionService.TokenSession currentTokenSession;
   private static IUserService.User currentUser;
 
   @BeforeClass
@@ -32,9 +31,11 @@ public class TokenSessionServiceTest extends AbstractTest {
     // create the client
     tokenSessionService = new TokenSessionClient();
     userService = new UserServiceClient();
-    currentUser = createUser();
-    currentTokenSession = createTokenSession();
-    assertNotNull(currentTokenSession);
+  }
+
+  private void setAuthToken(String authToken) {
+    ((UserServiceClient) userService).setAuthToken(authToken);
+    ((TokenSessionClient) tokenSessionService).setAuthToken(authToken);
   }
 
   @AfterClass
@@ -42,16 +43,18 @@ public class TokenSessionServiceTest extends AbstractTest {
     AbstractTest.shutdownServer();
   }
 
-  public static IUserService.User createUser() {
+  @Test
+  public void test01_createUser() {
     IUserService.UserContext user = new IUserService.UserContext();
     user.setUsername("e2e-tokensessiontest-username");
     user.setPassword("testuser");
     user.setDeposit(BigDecimal.TEN);
     user.setRole(IUserService.Role.BUYER);
-    return userService.createUser(user);
+    currentUser = userService.createUser(user);
   }
 
-  public static ITokenSessionService.TokenSession createTokenSession() {
+  @Test
+  public void test02_createTokenSession() {
     final Instant NOW = Instant.now();
     ITokenSessionService.TokenSessionContext tokenSessionContext = ITokenSessionService.TokenSessionContext
         .create("e2e-tokensessiontest-username", "testuser");
@@ -60,11 +63,12 @@ public class TokenSessionServiceTest extends AbstractTest {
     assertNotNull(tokenSession.getToken());
     assertTrue(tokenSession.getValidUntil().toInstant()
         .isAfter(NOW.plus(ONE_DAY)));
-    return tokenSession;
+    assertNotNull(tokenSession);
+    setAuthToken(tokenSession.getToken());
   }
 
   @Test
-  public void test02_createTokenSessionWrongPassword() {
+  public void test03_createTokenSessionWrongPassword() {
     ITokenSessionService.TokenSessionContext tokenSessionContext = ITokenSessionService.TokenSessionContext
         .create("e2e-tokensessiontest-username", "wrongpassword");
     Throwable t = null;
@@ -80,11 +84,11 @@ public class TokenSessionServiceTest extends AbstractTest {
 
   @Test
   public void test04_GetByToken() {
-    assertNotNull(currentTokenSession);
-    ITokenSessionService.TokenSession tokenSession = tokenSessionService.readTokenSession(currentTokenSession.getToken());
+    String authToken = ((UserServiceClient) userService).getAuthToken();
+    assertNotNull(authToken);
+    ITokenSessionService.TokenSession tokenSession = tokenSessionService.readTokenSession(authToken);
     assertEquals("e2e-tokensessiontest-username", tokenSession.getUsername());
-    assertEquals(currentTokenSession.getToken(), tokenSession.getToken());
-    assertEquals(currentTokenSession.getValidUntil(), tokenSession.getValidUntil());
+    assertEquals(authToken, tokenSession.getToken());
   }
 
   @Test

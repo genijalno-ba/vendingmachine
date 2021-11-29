@@ -1,5 +1,6 @@
 package co.mvpmatch.vendingmachine.rest;
 
+import co.mvpmatch.vendingmachine.contracts.IProductService;
 import co.mvpmatch.vendingmachine.contracts.ITokenSessionService;
 import co.mvpmatch.vendingmachine.contracts.IUserService;
 import jakarta.ws.rs.core.MediaType;
@@ -41,6 +42,21 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
     }
     if (e instanceof ITokenSessionService.VendingMachineAuthenticateException) {
       return Response.status(Response.Status.FORBIDDEN).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
+    if (e instanceof IProductService.VendingMachineCreateProductException) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
+    if (e instanceof IProductService.VendingMachineReadProductException) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
+    if (e instanceof IProductService.VendingMachineUpdateProductException) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
+    if (e instanceof IProductService.VendingMachineProductNotFoundException) {
+      return Response.status(Response.Status.NOT_FOUND).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
+    if (e instanceof IProductService.VendingMachineDeleteProductException) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
     }
     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create("Something went wrong")).type(MediaType.APPLICATION_JSON).build();
   }

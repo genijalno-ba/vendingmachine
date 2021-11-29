@@ -1,4 +1,4 @@
-package co.mvpmatch.vendingmachine.cdi;
+package co.mvpmatch.vendingmachine.data;
 
 import co.mvpmatch.vendingmachine.data.HikariCPDataSource;
 import jakarta.inject.Inject;

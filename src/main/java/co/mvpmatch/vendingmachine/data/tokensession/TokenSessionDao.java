@@ -50,6 +50,12 @@ public class TokenSessionDao extends AbstractDao<TokenSession> implements IToken
     return executeUpdate("DELETE FROM token_session_table WHERE token = ?", entity.getToken());
   }
 
+  @Override
+  public int deleteByUsername(TokenSession entity) throws SQLException {
+    return executeUpdate("DELETE FROM token_session_table WHERE username = ?",
+        entity.getUsername());
+  }
+
   protected TokenSession fromResultSet(ResultSet resultSet) throws SQLException {
     TokenSession tokenSession = new TokenSession();
     tokenSession.setUsername(resultSet.getString("username"));

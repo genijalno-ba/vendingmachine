@@ -60,6 +60,14 @@ public interface IUserService {
     }
   }
 
+  class VendingMachineDeleteUserDeleteTokenSessionException extends RuntimeException {
+    public static final long serialVersionUID = 1L;
+
+    public VendingMachineDeleteUserDeleteTokenSessionException(String message) {
+      super(message);
+    }
+  }
+
   class UserContext {
 
     private String username;

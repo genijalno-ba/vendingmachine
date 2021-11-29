@@ -1,7 +1,8 @@
 package co.mvpmatch.vendingmachine;
 
+import co.mvpmatch.vendingmachine.accesscontrol.AuthenticationFilter;
 import co.mvpmatch.vendingmachine.cdi.AutoScanFeature;
-import co.mvpmatch.vendingmachine.cdi.LiquibaseFeature;
+import co.mvpmatch.vendingmachine.data.LiquibaseFeature;
 import co.mvpmatch.vendingmachine.rest.GenericExceptionMapper;
 import co.mvpmatch.vendingmachine.rest.product.ProductController;
 import co.mvpmatch.vendingmachine.rest.tokensession.TokenSessionController;
@@ -28,8 +29,10 @@ public class Main {
   public static HttpServer startServer() {
 
     final ResourceConfig config = new ResourceConfig();
-    // enable the auto scanning
+    // enable the auto scanning for contracts and services
     config.register(AutoScanFeature.class);
+    // add others manually
+    config.register(AuthenticationFilter.class);
     config.register(LiquibaseFeature.class);
     config.register(TokenSessionController.class);
     config.register(UserController.class);
