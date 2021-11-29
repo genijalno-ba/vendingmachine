@@ -30,7 +30,7 @@ public class UserDao extends AbstractDao<User> implements IUserDao {
   public int update(User entity) throws SQLException {
     return executeUpdate("UPDATE user_table SET deposit = ?, role = ? WHERE username = ?",
         entity.getDeposit(),
-        entity.getRole(),
+        entity.getRole().name(),
         entity.getUsername());
   }
 

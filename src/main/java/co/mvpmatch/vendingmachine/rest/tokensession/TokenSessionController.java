@@ -11,8 +11,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-import static co.mvpmatch.vendingmachine.Main.API_NAME;
-import static co.mvpmatch.vendingmachine.Main.API_V1;
+import static co.mvpmatch.vendingmachine.VendingMachineApi.API_NAME;
+import static co.mvpmatch.vendingmachine.VendingMachineApi.API_V1;
 
 @SuppressWarnings("unused")
 @Path(API_NAME + API_V1 + "token-session")
@@ -24,7 +24,7 @@ public class TokenSessionController {
   private ITokenSessionService tokenSessionService;
 
   @GET
-  @Path("{token}")
+  @Path("/{token}")
   public ITokenSessionService.TokenSession getTokenSession(@PathParam("token") String token) {
     return tokenSessionService.readTokenSession(token);
   }
@@ -35,7 +35,7 @@ public class TokenSessionController {
   }
 
   @DELETE
-  @Path("{token}")
+  @Path("/{token}")
   public ITokenSessionService.TokenSession deleteTokenSession(@PathParam("token") String token) {
     return tokenSessionService.deleteTokenSession(token);
   }

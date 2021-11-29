@@ -17,7 +17,7 @@ import java.time.ZoneOffset;
 
 @SuppressWarnings("unused")
 @Service
-public class TokenSessionService implements ITokenSessionService {
+public class TokenSessionService extends AbstractService implements ITokenSessionService {
 
   @Inject
   private ITokenSessionRepository tokenSessionRepository;

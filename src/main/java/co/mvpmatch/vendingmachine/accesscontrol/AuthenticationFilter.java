@@ -1,6 +1,7 @@
 package co.mvpmatch.vendingmachine.accesscontrol;
 
-import co.mvpmatch.vendingmachine.contracts.ITokenSessionService;
+import co.mvpmatch.vendingmachine.data.tokensession.ITokenSessionRepository;
+import co.mvpmatch.vendingmachine.data.tokensession.TokenSession;
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
@@ -14,6 +15,9 @@ import jakarta.ws.rs.ext.Provider;
 
 import java.security.Key;
 import java.security.Principal;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 @Secured
@@ -28,7 +32,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
   private IKeyGenerator keyGenerator;
 
   @Inject
-  private ITokenSessionService tokenSessionService;
+  private ITokenSessionRepository tokenSessionRepository;
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
@@ -48,9 +52,21 @@ public class AuthenticationFilter implements ContainerRequestFilter {
       validateToken(token);
     } catch (Exception e) {
       abortWithUnauthorized(requestContext);
+      return;
     }
     // Identify User
-    ITokenSessionService.TokenSession tokenSession = tokenSessionService.readTokenSession(token);
+    TokenSession tokenSession;
+    try {
+      tokenSession = tokenSessionRepository.getTokenSessionByToken(token);
+    } catch (SQLException e) {
+      Logger.getLogger(AuthenticationFilter.class.getName()).log(Level.SEVERE, null, e);
+      abortWithInternalError(requestContext);
+      return;
+    }
+    if (null == tokenSession) {
+      abortWithUnauthorized(requestContext);
+      return;
+    }
     final String username = tokenSession.getUsername();
     final SecurityContext currentSecurityContext = requestContext.getSecurityContext();
     requestContext.setSecurityContext(new SecurityContext() {
@@ -91,6 +107,14 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         Response.status(Response.Status.UNAUTHORIZED)
             .header(HttpHeaders.WWW_AUTHENTICATE,
                 AUTHENTICATION_SCHEME + " realm=\"" + REALM + "\"")
+            .build());
+  }
+
+  private void abortWithInternalError(ContainerRequestContext requestContext) {
+    // Abort the filter chain with a 401 status code response
+    // The WWW-Authenticate header is sent along with the response
+    requestContext.abortWith(
+        Response.status(Response.Status.INTERNAL_SERVER_ERROR)
             .build());
   }
 

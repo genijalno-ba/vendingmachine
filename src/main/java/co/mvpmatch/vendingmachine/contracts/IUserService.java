@@ -32,6 +32,14 @@ public interface IUserService {
     }
   }
 
+  class VendingMachineGetUserForbiddenException extends RuntimeException {
+    public static final long serialVersionUID = 1L;
+
+    public VendingMachineGetUserForbiddenException(String message) {
+      super(message);
+    }
+  }
+
   class VendingMachineUserNotFoundException extends RuntimeException {
     public static final long serialVersionUID = 1L;
 

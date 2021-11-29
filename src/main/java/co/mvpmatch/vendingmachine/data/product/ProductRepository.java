@@ -16,12 +16,12 @@ public class ProductRepository implements IProductRepository {
   private IProductDao productDao;
 
   @Override
-  public int createProduct(IProductService.ProductContext productContext) throws SQLException {
+  public int createProduct(IProductService.ProductContext productContext, String sellerId) throws SQLException {
     Product product = new Product();
     product.setCost(productContext.getCost());
     product.setProductName(productContext.getProductName());
     product.setAmountAvailable(productContext.getAmountAvailable());
-    product.setSellerId(productContext.getSellerId());
+    product.setSellerId(sellerId);
     return productDao.create(product);
   }
 

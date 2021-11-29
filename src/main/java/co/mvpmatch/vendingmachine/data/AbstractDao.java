@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class AbstractDao<T> {
 
@@ -53,6 +55,7 @@ public abstract class AbstractDao<T> {
       preparedStatement.setObject(idx, arg);
       idx++;
     }
+    Logger.getLogger(AbstractDao.class.getName()).log(Level.INFO, "SQL: " + preparedStatement.toString());
     return preparedStatement;
   }
 }

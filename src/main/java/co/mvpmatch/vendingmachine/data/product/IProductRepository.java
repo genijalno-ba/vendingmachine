@@ -10,7 +10,7 @@ import java.util.Collection;
 @Contract
 public interface IProductRepository {
 
-  int createProduct(IProductService.ProductContext productContext) throws SQLException;
+  int createProduct(IProductService.ProductContext productContext, String sellerId) throws SQLException;
 
   Collection<Product> getAll() throws SQLException;
 

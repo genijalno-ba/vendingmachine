@@ -25,6 +25,11 @@ public class UserRepository implements IUserRepository {
   }
 
   @Override
+  public int updateUser(User user) throws SQLException {
+    return userDao.update(user);
+  }
+
+  @Override
   public int deleteUser(String username) throws SQLException {
     User user = new User();
     user.setUsername(username);

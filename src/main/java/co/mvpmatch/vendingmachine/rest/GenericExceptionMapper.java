@@ -1,6 +1,7 @@
 package co.mvpmatch.vendingmachine.rest;
 
 import co.mvpmatch.vendingmachine.accesscontrol.AuthorizationFilter;
+import co.mvpmatch.vendingmachine.contracts.IDepositService;
 import co.mvpmatch.vendingmachine.contracts.IProductService;
 import co.mvpmatch.vendingmachine.contracts.ITokenSessionService;
 import co.mvpmatch.vendingmachine.contracts.IUserService;
@@ -28,6 +29,9 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
     }
     if (e instanceof IUserService.VendingMachineCreateUserAlreadyExistsException) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
+    if (e instanceof IUserService.VendingMachineGetUserForbiddenException) {
+      return Response.status(Response.Status.FORBIDDEN).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
     }
     if (e instanceof ITokenSessionService.VendingMachineCreateTokenSessionException) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
@@ -61,6 +65,15 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
     }
     if (e instanceof IProductService.VendingMachineDeleteProductException) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
+    if (e instanceof IProductService.VendingMachineUpdateProductForbiddenException) {
+      return Response.status(Response.Status.FORBIDDEN).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
+    if (e instanceof IDepositService.VendingMachineDepositException) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
+    if (e instanceof IDepositService.VendingMachineInvalidDepositException) {
+      return Response.status(Response.Status.BAD_REQUEST).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
     }
     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create("Something went wrong")).type(MediaType.APPLICATION_JSON).build();
   }

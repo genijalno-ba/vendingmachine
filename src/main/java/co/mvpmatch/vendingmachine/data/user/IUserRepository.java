@@ -12,4 +12,6 @@ public interface IUserRepository {
   User getUser(String username) throws SQLException;
 
   int deleteUser(String username) throws SQLException;
+
+  int updateUser(User user) throws SQLException;
 }

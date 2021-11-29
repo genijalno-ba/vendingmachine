@@ -5,6 +5,7 @@ import co.mvpmatch.vendingmachine.accesscontrol.AuthorizationFilter;
 import co.mvpmatch.vendingmachine.cdi.AutoScanFeature;
 import co.mvpmatch.vendingmachine.data.LiquibaseFeature;
 import co.mvpmatch.vendingmachine.rest.GenericExceptionMapper;
+import co.mvpmatch.vendingmachine.rest.deposit.DepositController;
 import co.mvpmatch.vendingmachine.rest.product.ProductController;
 import co.mvpmatch.vendingmachine.rest.tokensession.TokenSessionController;
 import co.mvpmatch.vendingmachine.rest.user.UserController;
@@ -17,9 +18,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Main class.
+ * VendingMachineApi class.
  */
-public class Main {
+public class VendingMachineApi {
 
   public static final String API_NAME = "vendingmachine-api/";
   public static final String API_V1 = "v1/";
@@ -28,7 +29,6 @@ public class Main {
 
   // Starts Grizzly HTTP server
   public static HttpServer startServer() {
-
     final ResourceConfig config = new ResourceConfig();
     // enable the auto scanning for contracts and services
     config.register(AutoScanFeature.class);
@@ -39,41 +39,32 @@ public class Main {
     config.register(TokenSessionController.class);
     config.register(UserController.class);
     config.register(ProductController.class);
+    config.register(DepositController.class);
     config.register(GenericExceptionMapper.class);
-
-
+    // start http server
     return GrizzlyHttpServerFactory
         .createHttpServer(URI.create(BASE_URI), config);
-
   }
 
   public static void main(String[] args) {
-
     try {
-
       final HttpServer httpServer = startServer();
-
       // add jvm shutdown hook
       Runtime.getRuntime().addShutdownHook(new Thread(() -> {
         try {
           System.out.println("Shutting down the application...");
-
           httpServer.shutdownNow();
-
           System.out.println("Done, exit.");
         } catch (Exception e) {
-          Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+          Logger.getLogger(VendingMachineApi.class.getName()).log(Level.SEVERE, null, e);
         }
       }));
-
       System.out.printf("Application started.%nStop the application using CTRL+C%n");
-
       // block and wait shut down signal, like CTRL+C
       Thread.currentThread().join();
-
     } catch (InterruptedException ex) {
-      Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(VendingMachineApi.class.getName()).log(Level.SEVERE, null, ex);
     }
-
   }
+
 }

@@ -5,13 +5,15 @@ import co.mvpmatch.vendingmachine.contracts.IUserService;
 import co.mvpmatch.vendingmachine.data.tokensession.ITokenSessionRepository;
 import co.mvpmatch.vendingmachine.data.user.IUserRepository;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
 import org.jvnet.hk2.annotations.Service;
 
 import java.sql.SQLException;
 
 @SuppressWarnings("unused")
 @Service
-public class UserService implements IUserService {
+public class UserService extends AbstractService implements IUserService {
 
   @Inject
   private IUserRepository userRepository;
@@ -24,6 +26,9 @@ public class UserService implements IUserService {
 
   @Inject
   private ITokenSessionRepository tokenSessionRepository;
+
+  @Context
+  private SecurityContext securityContext;
 
   @Override
   public User createUser(UserContext userContext) {
@@ -49,6 +54,7 @@ public class UserService implements IUserService {
 
   @Override
   public User getUserByUsername(String username) {
+    checkGetUserPermission(username);
     try {
       co.mvpmatch.vendingmachine.data.user.User userEntity = userRepository.getUser(username);
       if (null == userEntity) {
@@ -62,6 +68,7 @@ public class UserService implements IUserService {
 
   @Override
   public User deleteUser(String username) {
+    checkGetUserPermission(username);
     try {
       co.mvpmatch.vendingmachine.data.user.User userEntity = userRepository.getUser(username);
       if (null == userEntity) {
@@ -75,6 +82,13 @@ public class UserService implements IUserService {
       return userAdapter.fromDb(userEntity);
     } catch (SQLException e) {
       throw new IUserService.VendingMachineDeleteUserException("Could not delete User, internal error", e);
+    }
+  }
+
+  private void checkGetUserPermission(String username) {
+    String loggedUsername = securityContext.getUserPrincipal().getName();
+    if (!loggedUsername.equals(username)) {
+      throw new IUserService.VendingMachineGetUserForbiddenException("You cannot see or edit other Users");
     }
   }
 }

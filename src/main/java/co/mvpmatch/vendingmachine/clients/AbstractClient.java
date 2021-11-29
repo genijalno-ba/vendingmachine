@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.GenericType;
 
 import java.util.Collection;
 
-import static co.mvpmatch.vendingmachine.Main.*;
+import static co.mvpmatch.vendingmachine.VendingMachineApi.*;
 import static co.mvpmatch.vendingmachine.accesscontrol.AuthenticationFilter.AUTHENTICATION_SCHEME;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 

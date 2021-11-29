@@ -2,7 +2,11 @@ package co.mvpmatch.vendingmachine.services;
 
 import co.mvpmatch.vendingmachine.contracts.IProductService;
 import co.mvpmatch.vendingmachine.data.product.IProductRepository;
+import co.mvpmatch.vendingmachine.data.user.IUserRepository;
+import co.mvpmatch.vendingmachine.data.user.User;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
 import org.jvnet.hk2.annotations.Service;
 
 import java.math.BigInteger;
@@ -13,7 +17,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @Service
-public class ProductService implements IProductService {
+public class ProductService extends AbstractService implements IProductService {
 
   @Inject
   private IProductRepository productRepository;
@@ -21,15 +25,22 @@ public class ProductService implements IProductService {
   @Inject
   private ProductAdapter productAdapter;
 
+  @Context
+  SecurityContext securityContext;
+
+  @Inject
+  private IUserRepository userRepository;
+
   @Override
   public Product createProduct(ProductContext productContext) {
     try {
-      boolean success = 1 == productRepository.createProduct(productContext);
+      User authUser = getLoggedUser(securityContext, userRepository);
+      String sellerId = authUser.getUsername();
+      boolean success = 1 == productRepository.createProduct(productContext, sellerId);
       if (!success) {
         throw new VendingMachineCreateProductException("Could not create product", null);
       }
       String productName = productContext.getProductName();
-      String sellerId = productContext.getSellerId();
       co.mvpmatch.vendingmachine.data.product.Product productEntity =
           productRepository.getByProductNameAndSellerId(productName, sellerId);
       return productAdapter.fromEntity(productEntity);
@@ -67,6 +78,7 @@ public class ProductService implements IProductService {
     try {
       co.mvpmatch.vendingmachine.data.product.Product productEntity =
           productAdapter.fromContext(product);
+      checkUpdateProductPermission(productEntity);
       boolean success = 1 == productRepository.updateProduct(productEntity);
       if (!success) {
         throw new VendingMachineUpdateProductException("Could not update product", null);
@@ -86,6 +98,7 @@ public class ProductService implements IProductService {
       if (null == productEntity) {
         throw new VendingMachineProductNotFoundException("Product not found");
       }
+      checkUpdateProductPermission(productEntity);
       boolean success = 1 == productRepository.deleteProduct(productId);
       if (!success) {
         throw new VendingMachineDeleteProductException("Could not delete product", null);
@@ -93,6 +106,13 @@ public class ProductService implements IProductService {
       return productAdapter.fromEntity(productEntity);
     } catch (SQLException e) {
       throw new VendingMachineDeleteProductException("Could not delete product", e);
+    }
+  }
+
+  private void checkUpdateProductPermission(co.mvpmatch.vendingmachine.data.product.Product product) throws SQLException {
+    User loggedUser = getLoggedUser(securityContext, userRepository);
+    if (!loggedUser.getUsername().equals(product.getSellerId())) {
+      throw new VendingMachineUpdateProductForbiddenException("You cannot update Products from other sellers");
     }
   }
 }

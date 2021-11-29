@@ -17,8 +17,8 @@ import jakarta.ws.rs.core.MediaType;
 import java.math.BigInteger;
 import java.util.Collection;
 
-import static co.mvpmatch.vendingmachine.Main.API_NAME;
-import static co.mvpmatch.vendingmachine.Main.API_V1;
+import static co.mvpmatch.vendingmachine.VendingMachineApi.API_NAME;
+import static co.mvpmatch.vendingmachine.VendingMachineApi.API_V1;
 
 @SuppressWarnings("unused")
 @Path(API_NAME + API_V1 + "product")
@@ -27,7 +27,7 @@ import static co.mvpmatch.vendingmachine.Main.API_V1;
 public class ProductController {
 
   @Inject
-  IProductService productService;
+  private IProductService productService;
 
   @GET
   public Collection<IProductService.Product> getAll() {
@@ -53,9 +53,9 @@ public class ProductController {
   }
 
   @DELETE
-  @Path("{productId}")
+  @Path("/{productId}")
   @Secured({IUserService.Role.SELLER})
-  public IProductService.Product deleteProduct(@PathParam("productId") BigInteger productId) {
-    return productService.deleteProduct(productId);
+  public IProductService.Product deleteProduct(@PathParam("productId") int productId) {
+    return productService.deleteProduct(BigInteger.valueOf(productId));
   }
 }

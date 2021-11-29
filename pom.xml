@@ -100,7 +100,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>co.mvpmatch.vendingmachine.Main</mainClass>
+                    <mainClass>co.mvpmatch.vendingmachine.VendingMachineApi</mainClass>
                 </configuration>
             </plugin>
             <plugin>

@@ -27,23 +27,20 @@ public interface IProductService {
     private final int amountAvailable;
     private final BigDecimal cost;
     private final String productName;
-    private final String sellerId;
 
     @JsonbCreator
     public static IProductService.ProductContext create(
         @JsonbProperty("amountAvailable") int amountAvailable,
         @JsonbProperty("cost") BigDecimal cost,
-        @JsonbProperty("productName") String productName,
-        @JsonbProperty("sellerId") String sellerId
+        @JsonbProperty("productName") String productName
     ) {
-      return new IProductService.ProductContext(amountAvailable, cost, productName, sellerId);
+      return new IProductService.ProductContext(amountAvailable, cost, productName);
     }
 
-    private ProductContext(int amountAvailable, BigDecimal cost, String productName, String sellerId) {
+    private ProductContext(int amountAvailable, BigDecimal cost, String productName) {
       this.amountAvailable = amountAvailable;
       this.cost = cost;
       this.productName = productName;
-      this.sellerId = sellerId;
     }
 
     public int getAmountAvailable() {
@@ -56,10 +53,6 @@ public interface IProductService {
 
     public String getProductName() {
       return productName;
-    }
-
-    public String getSellerId() {
-      return sellerId;
     }
   }
 
@@ -191,6 +184,15 @@ public interface IProductService {
 
     public VendingMachineDeleteProductException(String message, Throwable throwable) {
       super(message, throwable);
+    }
+  }
+
+  class VendingMachineUpdateProductForbiddenException extends RuntimeException {
+
+    public static final long serialVersionUID = 1L;
+
+    public VendingMachineUpdateProductForbiddenException(String message) {
+      super(message);
     }
   }
 }
