@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.jvnet.hk2.annotations.Service;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,9 +33,5 @@ public class HikariCPDataSource implements IDataSource {
 
   public Connection getConnection() throws SQLException {
     return dataSource.getConnection();
-  }
-
-  public DataSource getDataSource() {
-    return dataSource;
   }
 }
