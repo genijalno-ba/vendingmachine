@@ -5,6 +5,7 @@ import co.mvpmatch.vendingmachine.contracts.IDepositService;
 import co.mvpmatch.vendingmachine.contracts.IUserService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -14,7 +15,7 @@ import static co.mvpmatch.vendingmachine.VendingMachineApi.API_NAME;
 import static co.mvpmatch.vendingmachine.VendingMachineApi.API_V1;
 
 @SuppressWarnings("unused")
-@Path(API_NAME + API_V1 + "deposit")
+@Path(API_NAME + API_V1)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class DepositController {
@@ -24,7 +25,15 @@ public class DepositController {
 
   @POST
   @Secured({IUserService.Role.BUYER})
+  @Path("deposit")
   public IUserService.User deposit(IDepositService.DepositContext depositContext) {
     return depositService.deposit(depositContext);
+  }
+
+  @DELETE
+  @Secured({IUserService.Role.BUYER})
+  @Path("reset")
+  public IUserService.User reset() {
+    return depositService.reset();
   }
 }

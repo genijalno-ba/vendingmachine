@@ -42,6 +42,21 @@ public class DepositService extends AbstractService implements IDepositService {
     }
   }
 
+  @Override
+  public IUserService.User reset() {
+    try {
+      User user = getLoggedUser(securityContext, userRepository);
+      user.setDeposit(BigDecimal.ZERO);
+      boolean success = 1 == userRepository.updateUser(user);
+      if (!success) {
+        throw new IDepositService.VendingMachineResetDepositException("Could not reset deposit", null);
+      }
+      return userAdapter.fromDb(user);
+    } catch (SQLException e) {
+      throw new IDepositService.VendingMachineResetDepositException("Could not reset deposit", e);
+    }
+  }
+
   private void validateAmount(BigDecimal amount) {
     if (ALLOWED_DEPOSIT_AMOUNT.contains(amount)) {
       return;

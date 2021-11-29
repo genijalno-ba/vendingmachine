@@ -13,6 +13,8 @@ public interface IDepositService {
 
   IUserService.User deposit(DepositContext depositContext);
 
+  IUserService.User reset();
+
   Collection<BigDecimal> ALLOWED_DEPOSIT_AMOUNT = new HashSet<>() {{
     add(BigDecimal.valueOf(5));
     add(BigDecimal.valueOf(10));
@@ -43,6 +45,14 @@ public interface IDepositService {
     public static final long serialVersionUID = 1L;
 
     public VendingMachineDepositException(String message, Throwable throwable) {
+      super(message, throwable);
+    }
+  }
+
+  class VendingMachineResetDepositException extends RuntimeException {
+    public static final long serialVersionUID = 1L;
+
+    public VendingMachineResetDepositException(String message, Throwable throwable) {
       super(message, throwable);
     }
   }
