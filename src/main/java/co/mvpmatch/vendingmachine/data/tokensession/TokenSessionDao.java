@@ -7,65 +7,55 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 
+@SuppressWarnings("unused")
 @Service
-public class TokenSessionDao extends AbstractDao implements ITokenSessionDao {
+public class TokenSessionDao extends AbstractDao<TokenSession> implements ITokenSessionDao {
 
   @Override
-  public TokenSession create(TokenSession entity) throws SQLException {
-    boolean success = 1 == executeUpdate("INSERT INTO token_session_table (username, token, valid_until) VALUES (?, ?, ?)",
+  public int create(TokenSession entity) throws SQLException {
+    return executeUpdate("INSERT INTO token_session_table (username, token, valid_until) VALUES (?, ?, ?)",
         entity.getUsername(),
         entity.getToken(),
         entity.getValidUntil());
-    if (success) {
-      return read(entity);
-    }
-    return null;
   }
 
   @Override
   public TokenSession read(TokenSession entity) throws SQLException {
-    ResultSet resultSet = executeQuery("SELECT * FROM token_session_table WHERE username = ?", entity.getUsername());
-    return fromResultSet(resultSet);
+    return executeQuery("SELECT * FROM token_session_table WHERE username = ?",
+        entity.getUsername());
   }
 
   @Override
   public TokenSession readByToken(TokenSession entity) throws SQLException {
-    ResultSet resultSet = executeQuery("SELECT * FROM token_session_table WHERE token = ?", entity.getToken());
-    return fromResultSet(resultSet);
+    return executeQuery("SELECT * FROM token_session_table WHERE token = ?",
+        entity.getToken());
   }
 
   @Override
-  public TokenSession update(TokenSession entity) throws SQLException {
-    executeUpdate("UPDATE token_session_table SET token = ?, valid_until = ? WHERE username = ?",
+  public int update(TokenSession entity) throws SQLException {
+    return executeUpdate("UPDATE token_session_table SET token = ?, valid_until = ? WHERE username = ?",
         entity.getToken(),
         entity.getValidUntil(),
         entity.getUsername());
-    return read(entity);
   }
 
   @Override
-  public TokenSession delete(TokenSession entity) throws SQLException {
-    TokenSession tokenSession = read(entity);
-    executeUpdate("DELETE FROM token_session_table WHERE username = ?", entity.getUsername());
-    return tokenSession;
+  public int delete(TokenSession entity) throws SQLException {
+    return executeUpdate("DELETE FROM token_session_table WHERE username = ?",
+        entity.getUsername());
   }
 
   @Override
-  public TokenSession deleteByToken(TokenSession entity) throws SQLException {
-    TokenSession tokenSession = readByToken(entity);
-    executeUpdate("DELETE FROM token_session_table WHERE token = ?", entity.getToken());
-    return tokenSession;
+  public int deleteByToken(TokenSession entity) throws SQLException {
+    return executeUpdate("DELETE FROM token_session_table WHERE token = ?", entity.getToken());
   }
 
-  private TokenSession fromResultSet(ResultSet resultSet) throws SQLException {
-    if (resultSet.next()) {
-      TokenSession tokenSession = new TokenSession();
-      tokenSession.setUsername(resultSet.getString("username"));
-      tokenSession.setToken(resultSet.getString("token"));
-      tokenSession.setValidUntil(resultSet.getObject("valid_until", OffsetDateTime.class));
-      return tokenSession;
-    }
-    return null;
+  protected TokenSession fromResultSet(ResultSet resultSet) throws SQLException {
+    TokenSession tokenSession = new TokenSession();
+    tokenSession.setUsername(resultSet.getString("username"));
+    tokenSession.setToken(resultSet.getString("token"));
+    tokenSession.setValidUntil(resultSet.getObject("valid_until", OffsetDateTime.class));
+    return tokenSession;
   }
 
 }

@@ -34,6 +34,7 @@ public class AutoScanFeature implements Feature {
 
     } catch (IOException | MultiException ex) {
       Logger.getLogger(AutoScanFeature.class.getName()).log(Level.SEVERE, null, ex);
+      return false;
     }
     return true;
   }

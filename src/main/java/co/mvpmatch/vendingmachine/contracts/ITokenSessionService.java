@@ -131,4 +131,13 @@ public interface ITokenSessionService {
     }
   }
 
+  class VendingMachineAuthenticateIssueTokenException extends RuntimeException {
+
+    public static final long serialVersionUID = 1L;
+
+    public VendingMachineAuthenticateIssueTokenException(String message) {
+      super(message);
+    }
+  }
+
 }

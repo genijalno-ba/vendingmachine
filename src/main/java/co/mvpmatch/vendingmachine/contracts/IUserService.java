@@ -24,6 +24,14 @@ public interface IUserService {
     }
   }
 
+  class VendingMachineCreateUserAlreadyExistsException extends RuntimeException {
+    public static final long serialVersionUID = 1L;
+
+    public VendingMachineCreateUserAlreadyExistsException(String message, Throwable throwable) {
+      super(message, throwable);
+    }
+  }
+
   class VendingMachineUserNotFoundException extends RuntimeException {
     public static final long serialVersionUID = 1L;
 

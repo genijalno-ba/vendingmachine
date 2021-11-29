@@ -21,6 +21,9 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
     if (e instanceof IUserService.VendingMachineUserInternalErrorException) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
     }
+    if (e instanceof IUserService.VendingMachineCreateUserAlreadyExistsException) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
+    }
     if (e instanceof ITokenSessionService.VendingMachineCreateTokenSessionException) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ErrorMessage.create(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
     }

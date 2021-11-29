@@ -32,6 +32,9 @@ public class TokenSessionServiceTest extends AbstractTest {
     // create the client
     tokenSessionService = new TokenSessionClient();
     userService = new UserServiceClient();
+    currentUser = createUser();
+    currentTokenSession = createTokenSession();
+    assertNotNull(currentTokenSession);
   }
 
   @AfterClass
@@ -39,18 +42,16 @@ public class TokenSessionServiceTest extends AbstractTest {
     AbstractTest.shutdownServer();
   }
 
-  @Test
-  public void test01_createUser() {
+  public static IUserService.User createUser() {
     IUserService.UserContext user = new IUserService.UserContext();
     user.setUsername("e2e-tokensessiontest-username");
     user.setPassword("testuser");
     user.setDeposit(BigDecimal.TEN);
     user.setRole(IUserService.Role.BUYER);
-    currentUser = userService.createUser(user);
+    return userService.createUser(user);
   }
 
-  @Test
-  public void test02_createTokenSession() {
+  public static ITokenSessionService.TokenSession createTokenSession() {
     final Instant NOW = Instant.now();
     ITokenSessionService.TokenSessionContext tokenSessionContext = ITokenSessionService.TokenSessionContext
         .create("e2e-tokensessiontest-username", "testuser");
@@ -59,8 +60,7 @@ public class TokenSessionServiceTest extends AbstractTest {
     assertNotNull(tokenSession.getToken());
     assertTrue(tokenSession.getValidUntil().toInstant()
         .isAfter(NOW.plus(ONE_DAY)));
-    assertNotNull(tokenSession);
-    currentTokenSession = tokenSession;
+    return tokenSession;
   }
 
   @Test
@@ -79,29 +79,12 @@ public class TokenSessionServiceTest extends AbstractTest {
   }
 
   @Test
-  public void test03_GetByToken() {
+  public void test04_GetByToken() {
     assertNotNull(currentTokenSession);
     ITokenSessionService.TokenSession tokenSession = tokenSessionService.readTokenSession(currentTokenSession.getToken());
     assertEquals("e2e-tokensessiontest-username", tokenSession.getUsername());
     assertEquals(currentTokenSession.getToken(), tokenSession.getToken());
     assertEquals(currentTokenSession.getValidUntil(), tokenSession.getValidUntil());
-  }
-
-  @Test
-  public void test04_DeleteByToken() {
-    assertNotNull(currentTokenSession);
-    ITokenSessionService.TokenSession tokenSession = tokenSessionService.deleteTokenSession(currentTokenSession.getToken());
-    assertEquals("e2e-tokensessiontest-username", tokenSession.getUsername());
-    assertEquals(currentTokenSession.getToken(), tokenSession.getToken());
-    assertTrue(tokenSession.getValidUntil().toInstant().isBefore(Instant.now()));
-    Throwable t = null;
-    try {
-      tokenSessionService.readTokenSession(currentTokenSession.getToken());
-    } catch (Exception e) {
-      t = e;
-    }
-    assertNotNull(t);
-    assertTrue(t instanceof NotFoundException);
   }
 
   @Test

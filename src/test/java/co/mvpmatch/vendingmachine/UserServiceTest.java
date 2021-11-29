@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
 public class UserServiceTest extends AbstractTest {
 
   private static IUserService userService;

@@ -37,16 +37,14 @@ public class TokenSessionService implements ITokenSessionService {
 
   @Override
   public TokenSession createTokenSession(TokenSessionContext tokenSessionContext) {
-    TokenSession tokenSession;
     try {
       String username = tokenSessionContext.getUsername();
       String password = tokenSessionContext.getPassword();
       authenticate(username, password);
-      tokenSession = issueToken(username);
+      return issueToken(username);
     } catch (SQLException e) {
       throw new VendingMachineCreateTokenSessionException("Could not create token session", e);
     }
-    return tokenSession;
   }
 
   private void authenticate(String username, String password) throws SQLException {
@@ -63,9 +61,13 @@ public class TokenSessionService implements ITokenSessionService {
   private TokenSession issueToken(String username) throws SQLException {
     String token = jwtTokenIssuer.issueToken(username);
     OffsetDateTime validUntil = calculateValidUntil();
-    co.mvpmatch.vendingmachine.data.tokensession.TokenSession tokenSessionEntity =
-        tokenSessionRepository.createTokenSession(tokenSessionAdapter.fromContext(username, token, validUntil));
-    return tokenSessionAdapter.fromEntity(tokenSessionEntity);
+    co.mvpmatch.vendingmachine.data.tokensession.TokenSession tokenSession = tokenSessionAdapter.fromContext(username, token, validUntil);
+    boolean success =
+        1 == tokenSessionRepository.createTokenSession(tokenSession);
+    if (!success) {
+      throw new VendingMachineAuthenticateIssueTokenException("Could not create token session");
+    }
+    return tokenSessionAdapter.fromEntity(tokenSession);
   }
 
   private OffsetDateTime calculateValidUntil() {
@@ -75,35 +77,34 @@ public class TokenSessionService implements ITokenSessionService {
 
   @Override
   public TokenSession readTokenSession(String token) {
-    TokenSession tokenSession;
     try {
       co.mvpmatch.vendingmachine.data.tokensession.TokenSession tokenSessionEntity =
           tokenSessionRepository.getTokenSessionByToken(token);
       if (null == tokenSessionEntity) {
         throw new VendingMachineTokenSessionNotFoundException("Token session not found");
       }
-      tokenSession = tokenSessionAdapter.fromEntity(tokenSessionEntity);
+      return tokenSessionAdapter.fromEntity(tokenSessionEntity);
     } catch (SQLException e) {
       throw new VendingMachineReadTokenSessionException("Could not read token session", e);
     }
-    return tokenSession;
   }
 
   @Override
   public TokenSession deleteTokenSession(String token) {
-    TokenSession tokenSession;
     try {
       co.mvpmatch.vendingmachine.data.tokensession.TokenSession tokenSessionEntity =
           tokenSessionRepository.getTokenSessionByToken(token);
       if (null == tokenSessionEntity) {
         throw new VendingMachineDeleteTokenSessionNotFoundException("Token session not found");
       }
-      tokenSessionEntity = tokenSessionRepository.deleteTokenSession(token);
-      tokenSession = tokenSessionAdapter.fromEntity(tokenSessionEntity);
+      boolean success = 1 == tokenSessionRepository.deleteTokenSession(token);
+      if (!success) {
+        throw new VendingMachineDeleteTokenSessionException("Could not delete token session", null);
+      }
+      return tokenSessionAdapter.fromEntity(tokenSessionEntity);
     } catch (SQLException e) {
       throw new VendingMachineDeleteTokenSessionException("Could not delete token session", e);
     }
-    return tokenSession;
   }
 
 }

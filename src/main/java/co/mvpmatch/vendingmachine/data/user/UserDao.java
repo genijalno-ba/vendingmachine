@@ -7,57 +7,49 @@ import org.jvnet.hk2.annotations.Service;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@SuppressWarnings("unused")
 @Service
-public class UserDao extends AbstractDao implements IUserDao {
+public class UserDao extends AbstractDao<User> implements IUserDao {
 
   @Override
-  public User create(User entity) throws SQLException {
-    boolean success = 1 == executeUpdate("INSERT INTO user_table(username, password, deposit, role) VALUES (?, ?, ?, ?)",
+  public int create(User entity) throws SQLException {
+    return executeUpdate("INSERT INTO user_table(username, password, deposit, role) VALUES (?, ?, ?, ?)",
         entity.getUsername(),
         entity.getPassword(),
         entity.getDeposit(),
         entity.getRole().name());
-    if (success) {
-      return read(entity);
-    }
-    return null;
   }
 
   @Override
   public User read(User entity) throws SQLException {
-    ResultSet resultSet = executeQuery("SELECT * FROM user_table WHERE username = ?", entity.getUsername());
-    return fromResultSet(resultSet);
+    return executeQuery("SELECT * FROM user_table WHERE username = ?",
+        entity.getUsername());
   }
 
   @Override
-  public User update(User entity) throws SQLException {
-    executeUpdate("UPDATE user_table SET deposit = ?, role = ? WHERE username = ?",
+  public int update(User entity) throws SQLException {
+    return executeUpdate("UPDATE user_table SET deposit = ?, role = ? WHERE username = ?",
         entity.getDeposit(),
         entity.getRole(),
         entity.getUsername());
-    return read(entity);
   }
 
   @Override
-  public User delete(User entity) throws SQLException {
-    User user = read(entity);
-    executeUpdate("DELETE FROM user_table WHERE username = ?", entity.getUsername());
-    return user;
+  public int delete(User entity) throws SQLException {
+    return executeUpdate("DELETE FROM user_table WHERE username = ?",
+        entity.getUsername());
   }
 
-  private User fromResultSet(ResultSet resultSet) throws SQLException {
-    if (resultSet.next()) {
-      User user = new User();
-      user.setUsername(resultSet.getString("username"));
-      user.setDeposit(resultSet.getBigDecimal("deposit"));
-      user.setPassword(resultSet.getString("password"));
-      String role = resultSet.getString("role");
-      if (null != role) {
-        user.setRole(IUserService.Role.valueOf(role));
-      }
-      return user;
+  protected User fromResultSet(ResultSet resultSet) throws SQLException {
+    User user = new User();
+    user.setUsername(resultSet.getString("username"));
+    user.setDeposit(resultSet.getBigDecimal("deposit"));
+    user.setPassword(resultSet.getString("password"));
+    String role = resultSet.getString("role");
+    if (null != role) {
+      user.setRole(IUserService.Role.valueOf(role));
     }
-    return null;
+    return user;
   }
 
 }

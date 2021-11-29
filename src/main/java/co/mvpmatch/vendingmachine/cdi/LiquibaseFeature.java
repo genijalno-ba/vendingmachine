@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
+@SuppressWarnings("unused")
 public class LiquibaseFeature implements Feature {
 
   @Inject
@@ -29,7 +30,20 @@ public class LiquibaseFeature implements Feature {
 
   @Override
   public boolean configure(FeatureContext featureContext) {
-    Connection connection = null;
+    String pathToChangeLogFile = getChangeLogFile();
+    try (Connection connection = dataSource.getConnection()) {
+      Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+      Liquibase liquibase = new Liquibase(pathToChangeLogFile, new FileSystemResourceAccessor(), database);
+      liquibase.update(new Contexts());
+    } catch (SQLException e) {
+      throw new RuntimeException(new DatabaseException(e));
+    } catch (LiquibaseException e) {
+      throw new RuntimeException(e);
+    }
+    return true;
+  }
+
+  private String getChangeLogFile() {
     try {
       Properties prop = loadProperties();
       String changeLogFile = prop.getProperty("changeLogFile");
@@ -37,25 +51,10 @@ public class LiquibaseFeature implements Feature {
       if (!file.exists() || !file.isFile()) {
         throw new FileNotFoundException("Could not load changeLogFile: " + changeLogFile);
       }
-      connection = dataSource.getConnection();
-      Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-      Liquibase liquibase = new Liquibase(file.getAbsolutePath(), new FileSystemResourceAccessor(), database);
-      liquibase.update(new Contexts());
-    } catch (SQLException e) {
-      throw new RuntimeException(new DatabaseException(e));
-    } catch (IOException | LiquibaseException e) {
+      return file.getAbsolutePath();
+    } catch (IOException e) {
       throw new RuntimeException(e);
-    } finally {
-      if (connection != null) {
-        try {
-          connection.rollback();
-          connection.close();
-        } catch (SQLException e) {
-          //nothing to do
-        }
-      }
     }
-    return false;
   }
 
   public static Properties loadProperties() throws IOException {

@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.jvnet.hk2.annotations.Service;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,7 +14,7 @@ import java.util.Properties;
 @Service
 public class HikariCPDataSource implements IDataSource {
 
-  private final HikariDataSource ds;
+  private final HikariDataSource dataSource;
 
   public HikariCPDataSource() throws IOException {
     Properties prop = LiquibaseFeature.loadProperties();
@@ -29,11 +30,14 @@ public class HikariCPDataSource implements IDataSource {
     config.addDataSourceProperty("cachePrepStmts", "true");
     config.addDataSourceProperty("prepStmtCacheSize", "250");
     config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-    config.setMaximumPoolSize(20);
-    ds = new HikariDataSource(config);
+    dataSource = new HikariDataSource(config);
   }
 
   public Connection getConnection() throws SQLException {
-    return ds.getConnection();
+    return dataSource.getConnection();
+  }
+
+  public DataSource getDataSource() {
+    return dataSource;
   }
 }

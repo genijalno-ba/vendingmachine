@@ -4,9 +4,8 @@ import jakarta.inject.Inject;
 import org.jvnet.hk2.annotations.Service;
 
 import java.sql.SQLException;
-import java.time.Instant;
-import java.time.ZoneOffset;
 
+@SuppressWarnings("unused")
 @Service
 public class TokenSessionRepository implements ITokenSessionRepository {
 
@@ -14,7 +13,7 @@ public class TokenSessionRepository implements ITokenSessionRepository {
   ITokenSessionDao tokenSessionDao;
 
   @Override
-  public TokenSession createTokenSession(TokenSession tokenSession) throws SQLException {
+  public int createTokenSession(TokenSession tokenSession) throws SQLException {
     return tokenSessionDao.create(tokenSession);
   }
 
@@ -33,12 +32,16 @@ public class TokenSessionRepository implements ITokenSessionRepository {
   }
 
   @Override
-  public TokenSession deleteTokenSession(String token) throws SQLException {
+  public int deleteTokenSession(String token) throws SQLException {
     TokenSession tokenSession = new TokenSession();
     tokenSession.setToken(token);
-    tokenSession.setValidUntil(Instant.now().atOffset(ZoneOffset.UTC));
-    TokenSession entity = tokenSessionDao.deleteByToken(tokenSession);
-    tokenSession.setUsername(entity.getUsername());
-    return tokenSession;
+    return tokenSessionDao.deleteByToken(tokenSession);
+  }
+
+  @Override
+  public int deleteTokenSessionByUsername(String username) throws SQLException {
+    TokenSession tokenSession = new TokenSession();
+    tokenSession.setUsername(username);
+    return tokenSessionDao.delete(tokenSession);
   }
 }
