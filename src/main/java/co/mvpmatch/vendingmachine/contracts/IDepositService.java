@@ -15,12 +15,18 @@ public interface IDepositService {
 
   IUserService.User reset();
 
+  BigDecimal COIN_5 = BigDecimal.valueOf(5);
+  BigDecimal COIN_10 = BigDecimal.valueOf(10);
+  BigDecimal COIN_20 = BigDecimal.valueOf(20);
+  BigDecimal COIN_50 = BigDecimal.valueOf(50);
+  BigDecimal COIN_100 = BigDecimal.valueOf(100);
+
   Collection<BigDecimal> ALLOWED_DEPOSIT_AMOUNT = new HashSet<>() {{
-    add(BigDecimal.valueOf(5));
-    add(BigDecimal.valueOf(10));
-    add(BigDecimal.valueOf(20));
-    add(BigDecimal.valueOf(50));
-    add(BigDecimal.valueOf(100));
+    add(COIN_5);
+    add(COIN_10);
+    add(COIN_20);
+    add(COIN_50);
+    add(COIN_100);
   }};
 
   class DepositContext {

@@ -5,6 +5,7 @@ import co.mvpmatch.vendingmachine.accesscontrol.AuthorizationFilter;
 import co.mvpmatch.vendingmachine.cdi.AutoScanFeature;
 import co.mvpmatch.vendingmachine.data.LiquibaseFeature;
 import co.mvpmatch.vendingmachine.rest.GenericExceptionMapper;
+import co.mvpmatch.vendingmachine.rest.transaction.TransactionController;
 import co.mvpmatch.vendingmachine.rest.deposit.DepositController;
 import co.mvpmatch.vendingmachine.rest.product.ProductController;
 import co.mvpmatch.vendingmachine.rest.tokensession.TokenSessionController;
@@ -40,6 +41,7 @@ public class VendingMachineApi {
     config.register(UserController.class);
     config.register(ProductController.class);
     config.register(DepositController.class);
+    config.register(TransactionController.class);
     config.register(GenericExceptionMapper.class);
     // start http server
     return GrizzlyHttpServerFactory

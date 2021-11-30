@@ -17,6 +17,7 @@ import org.junit.runners.MethodSorters;
 
 import java.math.BigDecimal;
 
+import static co.mvpmatch.vendingmachine.contracts.IDepositService.COIN_10;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -25,7 +26,7 @@ public class DepositServiceTest extends VendingMachineApiTest {
   private static IDepositService depositService;
   private static IUserService userService;
   private static ITokenSessionService tokenSessionService;
-  private static final BigDecimal depositAmount = BigDecimal.valueOf(10);
+  private static final BigDecimal depositAmount = COIN_10;
   private static final IDepositService.DepositContext depositContext = IDepositService.DepositContext
       .create(depositAmount);
 
@@ -106,7 +107,8 @@ public class DepositServiceTest extends VendingMachineApiTest {
   @Test
   public void test04_IllegalDepositNotAllowed() {
     // check for BUYER illegal deposit
-    IDepositService.DepositContext illegalDepositContext = IDepositService.DepositContext.create(BigDecimal.valueOf(123));
+    IDepositService.DepositContext illegalDepositContext = IDepositService.DepositContext
+        .create(BigDecimal.valueOf(123));
     Throwable t = null;
     try {
       depositService.deposit(illegalDepositContext);
